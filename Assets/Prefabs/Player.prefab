@@ -226,7 +226,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!136 &2591304759895464871
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -394,11 +394,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootingPoint: {fileID: 8302068113096134586}
   bulletPrefab: {fileID: 702497587253834598, guid: f8b8f7fbde46f224c8d055c5444958e9, type: 3}
-  playerSpeed: 10
+  healthSlider: {fileID: 0}
+  playerSpeed: 15
   rotationSpeed: 10
-  bulletSpeed: 200
+  bulletSpeed: 150
   fireRate: 0.1
   damage: 20
+  regenDelay: 5
+  regenTickInterval: 0.01
+  healthToRegen: 10
+  playerCurrentHealth: 1000
+  playerMaxHealth: 1000
 --- !u!1 &8302068113096134586
 GameObject:
   m_ObjectHideFlags: 0

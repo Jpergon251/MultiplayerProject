@@ -1,19 +1,71 @@
+using System;
+using PlayerScripts;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public float maxHealth; // Salud máxima del enemigo
-    private float currentHealth; // Salud actual del enemigo
-    public float moveSpeed = 3f; // Velocidad de movimiento del enemigo
-    private Transform player; // Referencia al jugador
+    [Header("Stats")]
+    public float maxHealth = 100f;
+    private float currentHealth;
+
+    [Header("Movimiento")]
+    public float moveSpeed = 3f;
+
+    [Header("Ataque")]
+    public float attackDamage = 150f;
+    public float attackCooldown = 3f;
+    private float attackTimer = 0f;
+    private bool hasAttackedOnce = false;
+    // Estados internos
+    private bool isPlayerNear = false;
     private bool isDead = false;
 
-    public event System.Action OnDeath; // Evento para cuando el enemigo muere
+    // Referencias
+    private PlayerControllerGame player;
+
+    // Eventos
+    public event Action OnDeath;
+
+    // Trigger: detectar si el jugador está cerca
+    
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerNear = true;
+            attackTimer += Time.deltaTime;
+
+            // Realizar el primer ataque inmediatamente si no se ha hecho aún
+            if (!hasAttackedOnce)
+            {
+                AttackPlayer(attackDamage);
+                hasAttackedOnce = true; // Marcar que el primer ataque ya se realizó
+                attackTimer = 0f; // Reiniciar el temporizador
+            }
+
+            // Para los ataques siguientes, usar el temporizador con el ataque cooldown
+            if (attackTimer >= attackCooldown)
+            {
+                AttackPlayer(attackDamage);
+                attackTimer = 0f; // Reiniciar el temporizador después de cada ataque
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerNear = false;
+            attackTimer = 0f;
+            hasAttackedOnce = false;
+        }
+    }
 
     private void Awake()
     {
         currentHealth = maxHealth;
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControllerGame>();
     }
 
     private void Update()
@@ -28,18 +80,26 @@ public class EnemyController : MonoBehaviour
     {
         if (player == null) return;
 
-        Vector3 direction = (player.position - transform.position).normalized;
+        Vector3 direction = (player.transform.position - transform.position).normalized;
         transform.position += direction * moveSpeed * Time.deltaTime;
 
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
     }
 
+    private void AttackPlayer(float dmg)
+    {
+        if (!isPlayerNear || player == null) return;
+
+        player.TakeDamage(dmg);
+        Debug.Log("Atacando al jugador");
+    }
+
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
 
-        if (currentHealth <= 0f && !isDead) // Asegurarse de que no muera más de una vez
+        if (currentHealth <= 0f && !isDead)
         {
             Die();
         }
@@ -47,11 +107,11 @@ public class EnemyController : MonoBehaviour
 
     private void Die()
     {
-        if (isDead) return; // Si ya está muerto, no hacer nada más
-        isDead = true; // Marcamos al enemigo como muerto
-        OnDeath?.Invoke(); // Invocamos el evento de muerte
-        SpawnManager.Instance.HandleEnemyDeath(); // Notificamos al SpawnManager de la muerte
-        Destroy(gameObject); // Destruimos el objeto enemigo
+        if (isDead) return;
+
+        isDead = true;
+        OnDeath?.Invoke();
+        SpawnManager.Instance.HandleEnemyDeath();
+        Destroy(gameObject);
     }
 }
-
