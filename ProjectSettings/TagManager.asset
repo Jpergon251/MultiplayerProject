@@ -8,6 +8,7 @@ TagManager:
   - Bullet
   - SpawnEnemigo
   - Enemy
+  - Exit
   layers:
   - Default
   - TransparentFX

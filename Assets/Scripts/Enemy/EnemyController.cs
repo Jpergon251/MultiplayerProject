@@ -1,117 +1,121 @@
 using System;
+using Managers;
 using PlayerScripts;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+namespace Enemy
 {
-    [Header("Stats")]
-    public float maxHealth = 100f;
-    private float currentHealth;
+    public class EnemyController : MonoBehaviour
+    {
+        [Header("Stats")]
+        public float maxHealth = 100f;
+        private float _currentHealth;
 
-    [Header("Movimiento")]
-    public float moveSpeed = 3f;
+        [Header("Movimiento")]
+        public float moveSpeed = 3f;
 
-    [Header("Ataque")]
-    public float attackDamage = 150f;
-    public float attackCooldown = 3f;
-    private float attackTimer = 0f;
-    private bool hasAttackedOnce = false;
-    // Estados internos
-    private bool isPlayerNear = false;
-    private bool isDead = false;
+        [Header("Ataque")]
+        public float attackDamage = 150f;
+        public float attackCooldown = 3f;
+        private float _attackTimer;
+        private bool _hasAttackedOnce;
+        // Estados internos
+        private bool _isPlayerNear;
+        private bool _isDead;
 
-    // Referencias
-    private PlayerControllerGame player;
+        // Referencias
+        private PlayerControllerGame _player;
 
-    // Eventos
-    public event Action OnDeath;
+        // Eventos
+        public event Action OnDeath;
 
-    // Trigger: detectar si el jugador está cerca
+        // Trigger: detectar si el jugador está cerca
     
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        private void OnTriggerStay(Collider other)
         {
-            isPlayerNear = true;
-            attackTimer += Time.deltaTime;
-
-            // Realizar el primer ataque inmediatamente si no se ha hecho aún
-            if (!hasAttackedOnce)
+            if (other.CompareTag("Player"))
             {
-                AttackPlayer(attackDamage);
-                hasAttackedOnce = true; // Marcar que el primer ataque ya se realizó
-                attackTimer = 0f; // Reiniciar el temporizador
-            }
+                _isPlayerNear = true;
+                _attackTimer += Time.deltaTime;
 
-            // Para los ataques siguientes, usar el temporizador con el ataque cooldown
-            if (attackTimer >= attackCooldown)
+                // Realizar el primer ataque inmediatamente si no se ha hecho aún
+                if (!_hasAttackedOnce)
+                {
+                    AttackPlayer(attackDamage);
+                    _hasAttackedOnce = true; // Marcar que el primer ataque ya se realizó
+                    _attackTimer = 0f; // Reiniciar el temporizador
+                }
+
+                // Para los ataques siguientes, usar el temporizador con el ataque cooldown
+                if (_attackTimer >= attackCooldown)
+                {
+                    AttackPlayer(attackDamage);
+                    _attackTimer = 0f; // Reiniciar el temporizador después de cada ataque
+                }
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Player"))
             {
-                AttackPlayer(attackDamage);
-                attackTimer = 0f; // Reiniciar el temporizador después de cada ataque
+                _isPlayerNear = false;
+                _attackTimer = 0f;
+                _hasAttackedOnce = false;
             }
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        private void Awake()
         {
-            isPlayerNear = false;
-            attackTimer = 0f;
-            hasAttackedOnce = false;
+            _currentHealth = maxHealth;
+            _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControllerGame>();
         }
-    }
 
-    private void Awake()
-    {
-        currentHealth = maxHealth;
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControllerGame>();
-    }
-
-    private void Update()
-    {
-        if (!isDead)
+        private void Update()
         {
-            MoveTowardsPlayer();
+            if (!_isDead)
+            {
+                MoveTowardsPlayer();
+            }
         }
-    }
 
-    private void MoveTowardsPlayer()
-    {
-        if (player == null) return;
-
-        Vector3 direction = (player.transform.position - transform.position).normalized;
-        transform.position += direction * moveSpeed * Time.deltaTime;
-
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
-    }
-
-    private void AttackPlayer(float dmg)
-    {
-        if (!isPlayerNear || player == null) return;
-
-        player.TakeDamage(dmg);
-        Debug.Log("Atacando al jugador");
-    }
-
-    public void TakeDamage(float damage)
-    {
-        currentHealth -= damage;
-
-        if (currentHealth <= 0f && !isDead)
+        private void MoveTowardsPlayer()
         {
-            Die();
+            if (_player == null) return;
+
+            Vector3 direction = (_player.transform.position - transform.position).normalized;
+            transform.position += direction * (moveSpeed * Time.deltaTime);
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
         }
-    }
 
-    private void Die()
-    {
-        if (isDead) return;
+        private void AttackPlayer(float dmg)
+        {
+            if (!_isPlayerNear || _player == null) return;
 
-        isDead = true;
-        OnDeath?.Invoke();
-        SpawnManager.Instance.HandleEnemyDeath();
-        Destroy(gameObject);
+            _player.TakeDamage(dmg);
+            Debug.Log("Atacando al jugador");
+        }
+
+        public void TakeDamage(float damage)
+        {
+            _currentHealth -= damage;
+
+            if (_currentHealth <= 0f && !_isDead)
+            {
+                Die();
+            }
+        }
+
+        private void Die()
+        {
+            if (_isDead) return;
+
+            _isDead = true;
+            OnDeath?.Invoke();
+            SpawnManager.Instance.HandleEnemyDeath();
+            Destroy(gameObject);
+        }
     }
 }

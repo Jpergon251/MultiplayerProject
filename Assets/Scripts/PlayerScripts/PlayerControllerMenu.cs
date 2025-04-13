@@ -6,15 +6,13 @@ namespace PlayerScripts
 {
     public class PlayerControllerMenu : MonoBehaviour
     {
-        [SerializeField] private Scene sceneToLoad;
-
         public void StartGame(InputAction.CallbackContext context)
         {
             if (context.performed)
             {
             
                 // Debug.Log("Iniciando juego desde el menú");
-                SceneManager.LoadScene($"GameScene");
+                SceneManager.LoadSceneAsync("GameScene");
                 
             }
             
