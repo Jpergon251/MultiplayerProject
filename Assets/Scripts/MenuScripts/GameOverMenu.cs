@@ -29,7 +29,7 @@ namespace MenuScripts
             }
 
             // Cargar la escena principal al terminar la cuenta regresiva
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene("StartMenu");
         }
     }
 }

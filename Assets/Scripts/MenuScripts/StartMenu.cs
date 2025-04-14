@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace MenuScripts
 {
-    public class MainMenu : MonoBehaviour
+    public class StartMenu : MonoBehaviour
     {
         public GameObject insertCoinText;
         public GameObject keyToPressText;

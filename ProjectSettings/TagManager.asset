@@ -9,6 +9,7 @@ TagManager:
   - SpawnEnemigo
   - Enemy
   - Exit
+  - Menu
   layers:
   - Default
   - TransparentFX
