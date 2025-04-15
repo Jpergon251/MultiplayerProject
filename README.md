@@ -41,5 +41,5 @@ Bienvenido a **Arcade Shooter**, un juego de acción estilo arcade desarrollado 
 
 ## 🙌 Autor
 
-Creado por [Tu Nombre o Nickname].  
+Creado por Jprgon251.  
 ¡Con ganas de seguir aprendiendo y mejorando este juego!
