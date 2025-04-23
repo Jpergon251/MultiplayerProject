@@ -309,3 +309,6 @@ MonoBehaviour:
   moveSpeed: 3.5
   attackDamage: 150
   attackCooldown: 1
+  possibleDrops:
+  - {fileID: 7860960935593665077, guid: f6d35b0ad75672849b9a61dfee63f30c, type: 3}
+  dropChance: 0.2

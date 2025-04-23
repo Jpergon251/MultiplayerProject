@@ -27,8 +27,16 @@ namespace BulletScripts
         {
             if (other.CompareTag("Enemy"))
             {
-                other.GetComponent<EnemyController>()?.TakeDamage(damage);
-                Destroy(gameObject); // Si la bala se destruye al impactar
+                EnemyController enemy = other.GetComponent<EnemyController>();
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(damage);
+
+                    // 💥 Dar puntos por impacto
+                    _shooter?.AddScore(10);
+                }
+
+                Destroy(gameObject);
             }
         }
 
@@ -36,6 +44,13 @@ namespace BulletScripts
         {
             // Mover la bala en la dirección establecida
             transform.Translate(_direction * (speed * Time.deltaTime), Space.World);
+        }
+        
+        private PlayerInventory _shooter;
+
+        public void SetShooter(PlayerInventory player)
+        {
+            _shooter = player;
         }
     }
 }

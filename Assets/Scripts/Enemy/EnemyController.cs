@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Managers;
 using PlayerScripts;
 using UnityEngine;
@@ -19,12 +21,18 @@ namespace Enemy
         public float attackCooldown = 3f;
         private float _attackTimer;
         private bool _hasAttackedOnce;
+        
+        [Header("Drop Settings")]
+        public List<GameObject> possibleDrops; // Prefabs con el componente DroppableItem
+        [Range(0f, 1f)] public float dropChance = 0.2f; // 50% de probabilidad de dropear algo
+
         // Estados internos
         private bool _isPlayerNear;
         private bool _isDead;
 
         // Referencias
         private PlayerControllerGame _player;
+        private PlayerInventory _inventory;
 
         // Eventos
         public event Action OnDeath;
@@ -69,6 +77,8 @@ namespace Enemy
         {
             _currentHealth = maxHealth;
             _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControllerGame>();
+            _inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInventory>();
+            
         }
 
         private void Update()
@@ -86,16 +96,16 @@ namespace Enemy
             Vector3 direction = (_player.transform.position - transform.position).normalized;
             transform.position += direction * (moveSpeed * Time.deltaTime);
 
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            Quaternion targetRotation = Quaternion.LookRotation(direction); 
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
         }
 
         private void AttackPlayer(float dmg)
         {
-            if (!_isPlayerNear || _player == null) return;
+            if (!_isPlayerNear || _player == null || _player._isDead) return;
 
             _player.TakeDamage(dmg);
-            Debug.Log("Atacando al jugador");
+            // Debug.Log("Atacando al jugador");
         }
 
         public void TakeDamage(float damage)
@@ -108,11 +118,36 @@ namespace Enemy
             }
         }
 
+        private void TryDropItem()
+        {
+            if (possibleDrops == null || possibleDrops.Count == 0) return;
+
+            float roll = UnityEngine.Random.value;
+
+            if (roll <= dropChance)
+            {
+                int index = UnityEngine.Random.Range(0, possibleDrops.Count);
+                GameObject dropPrefab = possibleDrops[index];
+
+                if (dropPrefab != null)
+                {
+                    Instantiate(dropPrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+                }
+            }
+        }
+      
+        
         private void Die()
         {
             if (_isDead) return;
 
             _isDead = true;
+
+            // Dar puntos por kill
+            _inventory?.AddScore(50);
+
+            TryDropItem();
+            
             OnDeath?.Invoke();
             SpawnManager.Instance.HandleEnemyDeath();
             Destroy(gameObject);

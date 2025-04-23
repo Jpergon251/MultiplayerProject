@@ -1,9 +1,5 @@
-
-using System.Collections;
 using System.Linq;
-using Exits;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Managers
 {
@@ -23,9 +19,11 @@ namespace Managers
         public bool roundStarted;
         public bool roundEnded;
 
+        public bool isPlayerDead;
+        
         public int enemiesKilled;
-
-
+        
+        
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -35,14 +33,13 @@ namespace Managers
             else
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
+                // DontDestroyOnLoad(gameObject);
             }
         }
 
         private void Start()
         {
             roundStarted = true;
-            ExitsManager.Instance.DeactivateAllExits();
         }
 
         public void EnemyDied()
@@ -75,7 +72,6 @@ namespace Managers
             currentRound++;
             enemiesKilled = 0;
             enemiesPerRound += 5;
-            enemyHealthIncreasePerRound += 10f;
 
             roundStarted = true;
             roundEnded = false;

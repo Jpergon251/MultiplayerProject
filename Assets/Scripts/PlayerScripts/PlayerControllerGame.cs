@@ -1,4 +1,5 @@
 using BulletScripts;
+using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -11,7 +12,9 @@ namespace PlayerScripts
         [SerializeField] private GameObject shootingPoint;
         [SerializeField] private GameObject bulletPrefab;
         [SerializeField] private Slider healthSlider;
-
+        [SerializeField] private GameObject inGameMenu;
+        [SerializeField] private GameObject gameOverMenu;
+        
         [Header("Movimiento del Jugador")]
         [SerializeField] private float playerSpeed = 5f;
         [SerializeField] private float rotationSpeed = 10f;
@@ -21,7 +24,7 @@ namespace PlayerScripts
         [SerializeField] private float fireRate = 0.25f;
         [SerializeField] private float playerDamage = 20f;
 
-        [Header("Salud y Regeneraci\u00f3n")]
+        [Header("Salud y Regeneracion")]
         [SerializeField] private float regenDelay = 3f;
         [SerializeField] private float regenTickInterval = 0.5f;
         [SerializeField] private float healthToRegen = 25f;
@@ -30,10 +33,6 @@ namespace PlayerScripts
         [Range(0f, 1000f)] public float playerCurrentHealth;
         public float playerMaxHealth = 1000f;
 
-        [Header("Menus Control")]
-        [SerializeField] private GameObject inGameMenu;
-        [SerializeField] private GameObject gameOverMenu;
-        
         // Variables internas
         private float _regenCooldownTimer;
         private float _regenTickTimer;
@@ -41,16 +40,16 @@ namespace PlayerScripts
         
         private bool _isShooting;
         private bool _isTakingDamage;
-        private bool _isDead;
+        public bool _isDead;
         
         private Vector2 _moveInput;
         
         private Camera _mainCamera;
         private Rigidbody _rb;
+        private PlayerInventory _inventory;
 
         private void Awake()
         {
-            
             _mainCamera = GameObject.Find("Main Camera")?.GetComponent<Camera>();
 
             if (!shootingPoint || !bulletPrefab)
@@ -58,6 +57,7 @@ namespace PlayerScripts
 
             _rb = GetComponent<Rigidbody>();
             _rb.freezeRotation = true;
+            _inventory = GetComponent<PlayerInventory>(); // Añadir el componente Inventory
         }
 
         private void Start()
@@ -68,10 +68,9 @@ namespace PlayerScripts
 
         private void Update()
         {
-            LookToMouse();       // Girar al jugador hacia el rat\u00f3n
+            LookToMouse();       // Girar al jugador hacia el ratón
             HandleShooting();    // Controlar disparo
             HandleHealthRegen(); // Regenerar vida si es posible
-            UpdateHealthBar();   // Refrescar la barra de vida
         }
 
         private void FixedUpdate()
@@ -190,6 +189,7 @@ namespace PlayerScripts
             {
                 bulletScript.damage = playerDamage;
                 bulletScript.SetMoveDirection(shootingPoint.transform.forward, bulletSpeed);
+                bulletScript.SetShooter(this._inventory); // 💥 aquí pasamos el jugador
             }
         }
 
@@ -212,6 +212,7 @@ namespace PlayerScripts
                 if (_regenTickTimer <= 0f)
                 {
                     playerCurrentHealth += healthToRegen;
+                    UpdateHealthBar();
                     playerCurrentHealth = Mathf.Clamp(playerCurrentHealth, 0, playerMaxHealth);
                     _regenTickTimer = regenTickInterval;
                 }
@@ -221,6 +222,7 @@ namespace PlayerScripts
         public void TakeDamage(float damage)
         {
             playerCurrentHealth -= damage;
+            UpdateHealthBar();
             _regenCooldownTimer = regenDelay;
             _isTakingDamage = true;
 
@@ -233,12 +235,12 @@ namespace PlayerScripts
         private void Die()
         {
             Debug.Log("Jugador ha muerto.");
-            // Aquí podrías notificar al GameManager, jugar animaciones, etc.
             _isDead = true;
             inGameMenu.SetActive(false);
             gameOverMenu.SetActive(true);
             _rb.constraints = RigidbodyConstraints.FreezeAll;
-            
+            gameObject.SetActive(false);
+            GameManager.Instance.isPlayerDead = true;
         }
 
         private void UpdateHealthBar()
@@ -248,5 +250,7 @@ namespace PlayerScripts
                 healthSlider.value = playerCurrentHealth;
             }
         }
+
+        
     }
 }

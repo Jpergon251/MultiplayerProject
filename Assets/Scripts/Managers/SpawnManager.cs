@@ -1,4 +1,3 @@
-using System;
 using Enemy;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -60,6 +59,7 @@ namespace Managers
 
             for (int i = 0; i < spawnObjects.Length; i++)
             {
+                Debug.Log(spawnObjects[i].name);
                 spawnPoints[i] = spawnObjects[i].transform;
             }
         }
@@ -71,14 +71,19 @@ namespace Managers
                 Transform spawn = spawnPoints[randomIndex];
 
                 // Instanciamos el enemigo
-                GameObject enemy = Instantiate(enemyPrefab, spawn.position, Quaternion.identity);
-                GameManager.Instance.currentEnemiesAlive++;
-                GameManager.Instance.enemiesSpawned++;
-                // Asignar salud extra a cada enemigo dependiendo de la ronda
-                EnemyController enemyController = enemy.GetComponent<EnemyController>();
-                if (enemyController != null)
+                if (!GameManager.Instance.isPlayerDead)
                 {
-                    enemyController.maxHealth += (GameManager.Instance.currentRound - 1) * GameManager.Instance.enemyHealthIncreasePerRound; // Aumento de salud por ronda
+                    GameObject enemy = Instantiate(enemyPrefab, spawn.position, Quaternion.identity);
+                    GameManager.Instance.currentEnemiesAlive++;
+                    GameManager.Instance.enemiesSpawned++;
+                    // Asignar salud extra a cada enemigo dependiendo de la ronda
+                    EnemyController enemyController = enemy.GetComponent<EnemyController>();
+                    if (enemyController != null)
+                    {
+                        enemyController.maxHealth += (GameManager.Instance.currentRound - 1) *
+                                                     GameManager.Instance
+                                                         .enemyHealthIncreasePerRound; // Aumento de salud por ronda
+                    }
                 }
             }
         

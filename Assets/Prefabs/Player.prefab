@@ -123,6 +123,7 @@ GameObject:
   - component: {fileID: 2591304759895464871}
   - component: {fileID: -534591269133394288}
   - component: {fileID: 8554185341164826541}
+  - component: {fileID: 6518421691913546690}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -395,16 +396,41 @@ MonoBehaviour:
   shootingPoint: {fileID: 8302068113096134586}
   bulletPrefab: {fileID: 702497587253834598, guid: f8b8f7fbde46f224c8d055c5444958e9, type: 3}
   healthSlider: {fileID: 0}
+  inGameMenu: {fileID: 0}
+  gameOverMenu: {fileID: 0}
   playerSpeed: 15
   rotationSpeed: 10
   bulletSpeed: 150
   fireRate: 0.1
-  damage: 20
+  playerDamage: 20
   regenDelay: 5
   regenTickInterval: 0.01
   healthToRegen: 10
   playerCurrentHealth: 1000
   playerMaxHealth: 1000
+  _isDead: 0
+--- !u!114 &6518421691913546690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4331771141366788621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 393491e296139b54680a03b7e9e57d98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentScore: 0
+  currentMoney: 0
+  currentNukes: 0
+  currentShields: 0
+  currentBerserkers: 0
+  moneyText: {fileID: 0}
+  scoreText: {fileID: 0}
+  nukesText: {fileID: 0}
+  shieldsText: {fileID: 0}
+  berserkersText: {fileID: 0}
 --- !u!1 &8302068113096134586
 GameObject:
   m_ObjectHideFlags: 0
