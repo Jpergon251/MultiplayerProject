@@ -403,7 +403,7 @@ MonoBehaviour:
   bulletSpeed: 150
   fireRate: 0.1
   playerDamage: 20
-  regenDelay: 5
+  regenDelay: 3
   regenTickInterval: 0.01
   healthToRegen: 10
   playerCurrentHealth: 1000
