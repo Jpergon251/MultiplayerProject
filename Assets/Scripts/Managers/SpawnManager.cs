@@ -53,13 +53,13 @@ namespace Managers
 
         private void LoadSpawnPoints()
         {
-            Debug.Log("Cargados los SpawnPoints");
+            // Debug.Log("Cargados los SpawnPoints");
             GameObject[] spawnObjects = GameObject.FindGameObjectsWithTag("SpawnEnemigo");
             spawnPoints = new Transform[spawnObjects.Length];
 
             for (int i = 0; i < spawnObjects.Length; i++)
             {
-                Debug.Log(spawnObjects[i].name);
+                // Debug.Log(spawnObjects[i].name);
                 spawnPoints[i] = spawnObjects[i].transform;
             }
         }
@@ -81,8 +81,7 @@ namespace Managers
                     if (enemyController != null)
                     {
                         enemyController.maxHealth += (GameManager.Instance.currentRound - 1) *
-                                                     GameManager.Instance
-                                                         .enemyHealthIncreasePerRound; // Aumento de salud por ronda
+                                                     GameManager.Instance.enemyHealthIncreasePerRound; // Aumento de salud por ronda
                     }
                 }
             }

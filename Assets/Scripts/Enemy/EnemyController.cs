@@ -102,7 +102,7 @@ namespace Enemy
 
         private void AttackPlayer(float dmg)
         {
-            if (!_isPlayerNear || _player == null || _player._isDead) return;
+            if (!_isPlayerNear || _player == null || _player.isDead) return;
 
             _player.TakeDamage(dmg);
             // Debug.Log("Atacando al jugador");

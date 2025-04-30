@@ -9,10 +9,10 @@ namespace MenuScripts
 
         private void Start()
         {
-            InvokeRepeating("FlickKeyToPress", 0f, 0.5f);
+            // InvokeRepeating("FlickKeyToPress", 0f, 0.5f);
         }
 
-        private void FlickKeyToPress()
+        public void FlickKeyToPress()
         {
             keyToPressText.SetActive(!keyToPressText.activeSelf);
         }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-    [Header("Progreso del Jugador")]
+    [Header("Progreso del Jugador")] 
     [SerializeField] private int currentScore = 0;
     [SerializeField] private int currentMoney = 0;
     [SerializeField] private int currentNukes = 0;

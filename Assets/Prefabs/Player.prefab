@@ -124,6 +124,7 @@ GameObject:
   - component: {fileID: -534591269133394288}
   - component: {fileID: 8554185341164826541}
   - component: {fileID: 6518421691913546690}
+  - component: {fileID: 3934045051271238243}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -400,15 +401,12 @@ MonoBehaviour:
   gameOverMenu: {fileID: 0}
   playerSpeed: 15
   rotationSpeed: 10
-  bulletSpeed: 150
-  fireRate: 0.1
-  playerDamage: 20
   regenDelay: 3
   regenTickInterval: 0.01
   healthToRegen: 10
   playerCurrentHealth: 1000
   playerMaxHealth: 1000
-  _isDead: 0
+  isDead: 0
 --- !u!114 &6518421691913546690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,6 +429,20 @@ MonoBehaviour:
   nukesText: {fileID: 0}
   shieldsText: {fileID: 0}
   berserkersText: {fileID: 0}
+--- !u!114 &3934045051271238243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4331771141366788621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3b169d8d39e3a44c9f7fb887ee7ebbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponHolder: {fileID: 4424810467921662548}
+  currentWeapon: {fileID: 0}
 --- !u!1 &8302068113096134586
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,7 +453,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4424810467921662548}
   m_Layer: 0
-  m_Name: ShootingPoint
+  m_Name: WeaponHoldingPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,8 +1,9 @@
-using BulletScripts;
 using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Weapons;
 
 namespace PlayerScripts
 {
@@ -14,15 +15,16 @@ namespace PlayerScripts
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject inGameMenu;
         [SerializeField] private GameObject gameOverMenu;
-        
+       
+
         [Header("Movimiento del Jugador")]
         [SerializeField] private float playerSpeed = 5f;
         [SerializeField] private float rotationSpeed = 10f;
 
-        [Header("Disparo")]
+        /*[Header("Disparo")]
         [SerializeField] private float bulletSpeed = 10f;
         [SerializeField] private float fireRate = 0.25f;
-        [SerializeField] private float playerDamage = 20f;
+        [SerializeField] private float playerDamage = 20f;*/
 
         [Header("Salud y Regeneracion")]
         [SerializeField] private float regenDelay = 3f;
@@ -33,6 +35,10 @@ namespace PlayerScripts
         [Range(0f, 1000f)] public float playerCurrentHealth;
         public float playerMaxHealth = 1000f;
 
+        [Header("Arma")]
+        private WeaponHandler _weaponHandler;
+        
+        
         // Variables internas
         private float _regenCooldownTimer;
         private float _regenTickTimer;
@@ -40,7 +46,7 @@ namespace PlayerScripts
         
         private bool _isShooting;
         private bool _isTakingDamage;
-        public bool _isDead;
+        public bool isDead;
         
         private Vector2 _moveInput;
         
@@ -58,12 +64,13 @@ namespace PlayerScripts
             _rb = GetComponent<Rigidbody>();
             _rb.freezeRotation = true;
             _inventory = GetComponent<PlayerInventory>(); // Añadir el componente Inventory
+            _weaponHandler = GetComponent<WeaponHandler>();
         }
 
         private void Start()
         {
             playerCurrentHealth = playerMaxHealth;
-            _isDead = false;
+            isDead = false;
         }
 
         private void Update()
@@ -85,7 +92,7 @@ namespace PlayerScripts
 
         private void MovePlayerPhysics()
         {
-            if (!_isDead)
+            if (!isDead)
             {
                 Vector3 input = new Vector3(_moveInput.x, 0f, _moveInput.y);
 
@@ -143,7 +150,7 @@ namespace PlayerScripts
 
         public void LookToMouse()
         {
-            if (!_isDead)
+            if (!isDead)
             {
                 Ray ray = _mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
@@ -164,7 +171,7 @@ namespace PlayerScripts
 
         public void StartShooting(InputAction.CallbackContext context)
         {
-            if(!_isDead)
+            if(!isDead)
             {
                 if (context.performed) _isShooting = true;
                 else if (context.canceled) _isShooting = false;
@@ -173,8 +180,11 @@ namespace PlayerScripts
 
         private void HandleShooting()
         {
+            if (_weaponHandler.currentWeaponData == null) return;
+
             _shootTimer += Time.deltaTime;
-            if (_isShooting && _shootTimer >= fireRate)
+
+            if (_isShooting && _shootTimer >= _weaponHandler.currentWeaponData.fireRate)
             {
                 Shoot();
                 _shootTimer = 0f;
@@ -183,16 +193,34 @@ namespace PlayerScripts
 
         private void Shoot()
         {
-            GameObject bullet = Instantiate(bulletPrefab, shootingPoint.transform.position, shootingPoint.transform.rotation);
+            if (_weaponHandler.currentWeaponInstance == null || _weaponHandler.currentWeaponData == null) return;
+
+            // Obtener el shootPoint del arma actual (desde WeaponComponent)
+            WeaponComponent weaponComponent = _weaponHandler.currentWeaponInstance.GetComponent<WeaponComponent>();
+            if (weaponComponent == null || weaponComponent.shootPoint == null)
+            {
+                Debug.LogWarning("El arma no tiene WeaponComponent o shootPoint.");
+                return;
+            }
+
+            Transform shootPoint = weaponComponent.shootPoint;
+            Debug.DrawRay(shootPoint.position, shootPoint.forward * 2f, Color.red, 2f);
+            // Instanciar la bala
+            GameObject bullet = Instantiate(
+                _weaponHandler.currentWeaponData.bulletPrefab,
+                shootPoint.position,
+                shootPoint.rotation
+            );
+            
+            // Configurar la bala
             BulletController bulletScript = bullet.GetComponent<BulletController>();
             if (bulletScript != null)
             {
-                bulletScript.damage = playerDamage;
-                bulletScript.SetMoveDirection(shootingPoint.transform.forward, bulletSpeed);
-                bulletScript.SetShooter(this._inventory); // 💥 aquí pasamos el jugador
+                bulletScript.damage = _weaponHandler.currentWeaponData.damage;
+                bulletScript.SetMoveDirection(shootPoint.forward, _weaponHandler.currentWeaponData.bulletSpeed);
+                bulletScript.SetShooter(_inventory); // Si tu bala necesita saber quién disparó (para puntuación, etc.)
             }
         }
-
         private void HandleHealthRegen()
         {
             if (playerCurrentHealth >= playerMaxHealth) return;
@@ -235,7 +263,7 @@ namespace PlayerScripts
         private void Die()
         {
             Debug.Log("Jugador ha muerto.");
-            _isDead = true;
+            isDead = true;
             inGameMenu.SetActive(false);
             gameOverMenu.SetActive(true);
             _rb.constraints = RigidbodyConstraints.FreezeAll;

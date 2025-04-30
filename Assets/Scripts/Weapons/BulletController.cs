@@ -1,7 +1,7 @@
 using Enemy;
 using UnityEngine;
 
-namespace BulletScripts
+namespace Weapons
 {
     public class BulletController : MonoBehaviour
     {
@@ -32,7 +32,7 @@ namespace BulletScripts
                 {
                     enemy.TakeDamage(damage);
 
-                    // 💥 Dar puntos por impacto
+                    // Dar puntos por impacto
                     _shooter?.AddScore(10);
                 }
 
