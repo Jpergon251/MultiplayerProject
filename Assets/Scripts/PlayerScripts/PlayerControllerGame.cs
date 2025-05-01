@@ -1,9 +1,7 @@
-using System;
-using Enemy;
 using Managers;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Weapons;
 
@@ -22,11 +20,7 @@ namespace PlayerScripts
         [Header("Movimiento del Jugador")]
         [SerializeField] private float playerSpeed = 5f;
         [SerializeField] private float rotationSpeed = 10f;
-
-        /*[Header("Disparo")]
-        [SerializeField] private float bulletSpeed = 10f;
-        [SerializeField] private float fireRate = 0.25f;
-        [SerializeField] private float playerDamage = 20f;*/
+        
 
         [Header("Salud y Regeneracion")]
         [SerializeField] private float regenDelay = 3f;
@@ -58,7 +52,7 @@ namespace PlayerScripts
         private void Awake()
         {
             _mainCamera = GameObject.Find("Main Camera")?.GetComponent<Camera>();
-
+            
             if (!shootingPoint || !bulletPrefab)
                 Debug.LogError("Faltan referencias asignadas en el inspector.");
 
@@ -192,38 +186,6 @@ namespace PlayerScripts
             }
         }
 
-        /*private void Shoot()
-        {
-            if (_weaponHandler.currentWeaponInstance == null || _weaponHandler.currentWeaponData == null) return;
-
-            // Obtener el shootPoint del arma actual (desde WeaponComponent)
-            WeaponComponent weaponComponent = _weaponHandler.currentWeaponInstance.GetComponent<WeaponComponent>();
-            if (weaponComponent == null || weaponComponent.shootPoint == null)
-            {
-                Debug.LogWarning("El arma no tiene WeaponComponent o shootPoint.");
-                return;
-            }
-
-            Transform shootPoint = weaponComponent.shootPoint;
-            Debug.DrawRay(shootPoint.position, shootPoint.forward * 2f, Color.red, 2f);
-            // Instanciar la bala
-            GameObject bullet = Instantiate(
-                _weaponHandler.currentWeaponData.bulletPrefab,
-                shootPoint.position,
-                shootPoint.rotation
-            );
-            
-            // Configurar la bala
-            BulletController bulletScript = bullet.GetComponent<BulletController>();
-            if (bulletScript != null)
-            {
-                bulletScript.damage = _weaponHandler.currentWeaponData.damage;
-                bulletScript.SetMoveDirection(shootPoint.forward, _weaponHandler.currentWeaponData.bulletSpeed);
-                bulletScript.SetShooter(_inventory); // Si tu bala necesita saber quién disparó (para puntuación, etc.)
-            }
-        }*/
-        
-       
         private void HandleHealthRegen()
         {
             if (playerCurrentHealth >= playerMaxHealth) return;
@@ -281,7 +243,5 @@ namespace PlayerScripts
                 healthSlider.value = playerCurrentHealth;
             }
         }
-
-        
     }
 }

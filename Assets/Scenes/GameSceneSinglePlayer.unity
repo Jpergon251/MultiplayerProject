@@ -831,6 +831,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 458528159}
+  - component: {fileID: 458528160}
   m_Layer: 5
   m_Name: InGameMenu
   m_TagString: Untagged
@@ -852,6 +853,7 @@ RectTransform:
   m_Children:
   - {fileID: 1742419361}
   - {fileID: 1595141540}
+  - {fileID: 1731151047}
   m_Father: {fileID: 2057461144}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -859,6 +861,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &458528160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458528158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 995facced67525c44bd78a3df2975eba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arrowPointerPrefab: {fileID: 2972129684111578606, guid: e059ce62f45c99a4683f0a6364065296, type: 3}
+  arrowPointerContainer: {fileID: 1731151047}
+  exitsParent: {fileID: 1863129824}
 --- !u!1 &593275571
 GameObject:
   m_ObjectHideFlags: 0
@@ -2330,7 +2347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18adcb2a7b63395499ad95ea9bb10b44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemiesPerRound: 20
+  enemiesPerRound: 1
   currentEnemiesAlive: 0
   enemiesSpawned: 0
   enemyHealthIncreasePerRound: 20
@@ -3130,6 +3147,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1731151046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1731151047}
+  m_Layer: 5
+  m_Name: ArrowPointerContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1731151047
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731151046}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 458528159}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1740706539
 PrefabInstance:
   m_ObjectHideFlags: 0

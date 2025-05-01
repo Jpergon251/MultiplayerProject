@@ -1,16 +1,47 @@
+// Cada puerta tiene un componente tipo ExitController con isActive
+using System.Collections.Generic;
 using UnityEngine;
 
-public class HUDController : MonoBehaviour
+namespace MenuScripts
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class HUDController : MonoBehaviour
     {
-        
-    }
+        [SerializeField] private GameObject arrowPointerPrefab;
+        [SerializeField] private Transform arrowPointerContainer;
+        [SerializeField] private Transform exitsParent; // ⬅️ El objeto que contiene las salidas
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private List<GameObject> activePointers = new();
+
+        public void UpdateExitArrows()
+        {
+            ClearAllArrows();
+
+            foreach (Transform exit in exitsParent)
+            {
+                var exitComponent = exit.GetComponent<Exits.ExitsController>();
+                if (exitComponent != null && exitComponent.isActive)
+                {
+                    GameObject pointer = Instantiate(arrowPointerPrefab, arrowPointerContainer);
+                    pointer.SetActive(true);
+
+                    var tracker = pointer.GetComponent<ArrowTracker>();
+                    if (tracker != null)
+                    {
+                        tracker.target = exit.transform;
+                    }
+
+                    activePointers.Add(pointer);
+                }
+            }
+        }
+
+        public void ClearAllArrows()
+        {
+            foreach (var pointer in activePointers)
+            {
+                Destroy(pointer);
+            }
+            activePointers.Clear();
+        }
     }
 }

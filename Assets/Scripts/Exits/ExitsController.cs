@@ -7,11 +7,12 @@ namespace Exits
     {
         // === Public ===
         public ExitsManager.DirectionType exitDirection;
-
+        public bool isActive = false;
+        
         // === Private ===
         private Collider _collider;
         private MeshRenderer _renderer;
-
+        
         // === Unity Methods ===
         private void Awake()
         {
@@ -32,12 +33,14 @@ namespace Exits
         // === Public Methods ===
         public void ActivateExit()
         {
+            isActive = true;
             _collider.enabled = true;
             _renderer.enabled = true;
         }
 
         public void DeactivateExit()
         {
+            isActive = false;
             _collider.enabled = false;
             _renderer.enabled = false;
         }

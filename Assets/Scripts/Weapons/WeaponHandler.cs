@@ -72,12 +72,16 @@ namespace Weapons
             float range = currentWeaponData.range;
             float penetration = currentWeaponData.penetration;
             float baseDamage = currentWeaponData.damage;
-            float dispersion = currentWeaponData.dispersion;
+            float dispersion = currentWeaponData.dispersion; // entre 0 y 2
+            float maxAngle = dispersion * 5f; // Escalado de ángulo (ajustable)
+            float angle = UnityEngine.Random.Range(-1f, 1f);
+            angle = Mathf.Sign(angle) * Mathf.Pow(Mathf.Abs(angle), 2f); // curva cuadrática
 
-            float angle = UnityEngine.Random.Range(-dispersion, dispersion);
-            // Dispersion del disparo
-            Vector3 spreadDirection = Quaternion.Euler(0, angle + (10f * angle), 0) * direction;
-
+            float finalAngle = angle * maxAngle;
+            // Debug.Log("Dispersion:" + dispersion + "\n Angulo: " + angle + "\n Angulo maximo: " + maxAngle + "\n Angulo final:" + finalAngle );
+            Vector3 spreadDirection = Quaternion.Euler(0, finalAngle, 0) * direction;
+            
+            
             RaycastHit[] hits = Physics.RaycastAll(shootPoint.position, spreadDirection, range);
             Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
 

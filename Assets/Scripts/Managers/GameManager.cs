@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Animations;
+using MenuScripts;
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Managers
 {
@@ -26,7 +29,8 @@ namespace Managers
         public bool isPlayerDead;
         public int enemiesKilled;
         
-        
+        [Header("HUD settings")]
+        private HUDController _hud;
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -43,6 +47,7 @@ namespace Managers
         private void Start()
         {
             roundStarted = true;
+            _hud = FindObjectOfType<HUDController>();
         }
 
         public void EnemyDied()
@@ -68,6 +73,8 @@ namespace Managers
             {
                 ExitsManager.Instance.ActivateAllExitsExceptOpposite();
             }
+            
+            _hud.UpdateExitArrows();
         }
 
         private IEnumerator StartNextRoundCoroutine()
@@ -83,44 +90,56 @@ namespace Managers
             currentEnemiesAlive = 0;
             enemiesSpawned = 0;
 
-            
-
             // Aquí podrías poner una animación de "¡Nueva Ronda!", un sonido, etc.
             Debug.Log("Comienza la ronda " + currentRound);
         }
         
-        
         public void HandleExitUsed(ExitsManager.DirectionType usedExit)
         {
+            
             StartCoroutine(HandleExitUsedCoroutine(usedExit));
+            
         }
 
         private IEnumerator HandleExitUsedCoroutine(ExitsManager.DirectionType usedExit)
         {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            PlayerInput playerInput = player.GetComponent<PlayerInput>();
+            CinemachineOrbitalFollow orbitalFollow = GameObject.Find("PlayerCamera").GetComponent<CinemachineOrbitalFollow>();
+
+            
             FadeTransition.Instance.PlayFadeOut();
 
             ExitsManager.Instance.DeactivateAllExits();
+
+            
+            
+            playerInput.enabled = false;
+            
             yield return new WaitForSeconds(1f);
 
+            _hud.ClearAllArrows();
+            // Debug.Log(orbitalFollow.TrackerSettings.PositionDamping);
+            orbitalFollow.TrackerSettings.PositionDamping = Vector3.zero;
+            // Debug.Log(orbitalFollow.TrackerSettings.PositionDamping);
+            
             // Determina la salida opuesta
             var opposite = ExitsManager.Instance.GetOppositeDirection(usedExit);
             var oppositeExit = ExitsManager.Instance.exits.FirstOrDefault(e => e.exitDirection == opposite);
-
+           
             if (oppositeExit != null)
             {
-                GameObject player = GameObject.FindGameObjectWithTag("Player");
                 player.transform.position = oppositeExit.transform.position;
                 player.transform.rotation = oppositeExit.transform.rotation;
             }
             
             yield return new WaitForSeconds(1f); // opcional, si quieres dejar respirar la transición
             
+            orbitalFollow.TrackerSettings.PositionDamping = new Vector3(5,1,5);
+            // Debug.Log(orbitalFollow.TrackerSettings.PositionDamping);
+            playerInput.enabled = true;
             FadeTransition.Instance.PlayFadeIn();
             StartCoroutine(StartNextRoundCoroutine());
         }
-        
-
-
-
     }
 }
