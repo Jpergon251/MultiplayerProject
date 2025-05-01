@@ -15,8 +15,10 @@ GameObject:
   - component: {fileID: 4187872854306718852}
   - component: {fileID: 3292822257528603636}
   - component: {fileID: 7276142297920509897}
+  - component: {fileID: 345290088505834378}
+  - component: {fileID: 28835547214538738}
   m_Layer: 0
-  m_Name: Money
+  m_Name: MoneyPickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4148,4 +4150,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6bc2b601254fcd4a93647b1e4cfec10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropItemData: {fileID: 0}
+  dropItemType: 0
+--- !u!114 &345290088505834378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7860960935593665077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d352a4faa15b57748a65751429b6b5f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+--- !u!95 &28835547214538738
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7860960935593665077}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6544489289e60dc429ed835777cf9e94, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

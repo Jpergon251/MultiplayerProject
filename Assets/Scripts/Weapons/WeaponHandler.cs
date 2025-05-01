@@ -1,6 +1,6 @@
 using System;
+using Enemy;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Weapons
 {
@@ -8,7 +8,9 @@ namespace Weapons
     {
         [SerializeField] private Transform weaponHolder;
         [SerializeField] private GameObject weaponPrefab; // ← sigue siendo el prefab base, no lo toques
+        [SerializeField] private GameObject bulletTrailPrefab; // Asignar en inspector
 
+        
         public GameObject currentWeaponInstance;
         public Weapon currentWeaponData;
 
@@ -17,8 +19,24 @@ namespace Weapons
             EquipWeapon();
         }
 
+        public void EquipNewWeapon(GameObject newWeaponPrefab)
+        {
+            // 1. Destruir arma anterior si existe
+            if (currentWeaponInstance != null)
+            {
+                currentWeaponInstance = null;
+                currentWeaponData = null;
+                weaponPrefab = null;
+            }
+                
+            
+            // 2. Instanciar nueva arma como hijo del holder
+            weaponPrefab = newWeaponPrefab;
+            EquipWeapon();
+        }
         public void EquipWeapon()
         {
+            if (weaponPrefab == null) return;
             // Destruye el arma anterior si existe
             if (currentWeaponInstance != null)
                 Destroy(currentWeaponInstance);
@@ -38,6 +56,76 @@ namespace Weapons
             }
         }
 
+        public void Shoot(PlayerInventory inventory)
+        {
+            if (!currentWeaponInstance || !currentWeaponData || !weaponPrefab) return;
+
+            WeaponComponent weaponComponent = currentWeaponInstance.GetComponent<WeaponComponent>();
+            if (!weaponComponent || !weaponComponent.shootPoint)
+            {
+                Debug.LogWarning("El arma no tiene WeaponComponent o shootPoint.");
+                return;
+            }
+
+            Transform shootPoint = weaponComponent.shootPoint;
+            Vector3 direction = shootPoint.forward;
+            float range = currentWeaponData.range;
+            float penetration = currentWeaponData.penetration;
+            float baseDamage = currentWeaponData.damage;
+            float dispersion = currentWeaponData.dispersion;
+
+            float angle = UnityEngine.Random.Range(-dispersion, dispersion);
+            // Dispersion del disparo
+            Vector3 spreadDirection = Quaternion.Euler(0, angle + (10f * angle), 0) * direction;
+
+            RaycastHit[] hits = Physics.RaycastAll(shootPoint.position, spreadDirection, range);
+            Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            int fullHits = Mathf.FloorToInt(penetration);
+            float partialHitFraction = penetration - fullHits;
+            int hitCount = 0;
+
+            Vector3 endPoint = shootPoint.position + spreadDirection * range;
+
+            foreach (RaycastHit hit in hits)
+            {
+                EnemyController enemy = hit.collider.GetComponent<EnemyController>();
+                if (enemy)
+                {
+                    if (hitCount < fullHits)
+                    {
+                        enemy.TakeDamage(baseDamage);
+                        hitCount++;
+                        inventory.AddScore(10);
+                    }
+                    else if (hitCount == fullHits && partialHitFraction > 0f)
+                    {
+                        enemy.TakeDamage(baseDamage * partialHitFraction);
+                        hitCount++;
+                        endPoint = hit.point;
+                        break;
+                    }
+
+                    endPoint = hit.point;
+                }
+            }
+
+            CreateBulletTrail(shootPoint.position, endPoint); // Podrías mover esto también al WeaponComponent
+
+            Debug.DrawRay(shootPoint.position, spreadDirection * range, Color.red, 1f);
+        }
+        private void CreateBulletTrail(Vector3 start, Vector3 end)
+        {
+            GameObject trail = Instantiate(bulletTrailPrefab);
+            LineRenderer lr = trail.GetComponent<LineRenderer>();
+            if (lr)
+            {
+                lr.SetPosition(0, start);
+                lr.SetPosition(1, end);
+            }
+
+            Destroy(trail, 0.02f); // Dura muy poco para parecer un "trazo de bala"
+        }
         public Weapon GetCurrentWeaponData() => currentWeaponData;
     }
 }

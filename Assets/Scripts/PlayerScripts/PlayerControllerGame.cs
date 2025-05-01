@@ -1,3 +1,5 @@
+using System;
+using Enemy;
 using Managers;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,7 +39,6 @@ namespace PlayerScripts
 
         [Header("Arma")]
         private WeaponHandler _weaponHandler;
-        
         
         // Variables internas
         private float _regenCooldownTimer;
@@ -186,12 +187,12 @@ namespace PlayerScripts
 
             if (_isShooting && _shootTimer >= _weaponHandler.currentWeaponData.fireRate)
             {
-                Shoot();
+                _weaponHandler.Shoot(_inventory);
                 _shootTimer = 0f;
             }
         }
 
-        private void Shoot()
+        /*private void Shoot()
         {
             if (_weaponHandler.currentWeaponInstance == null || _weaponHandler.currentWeaponData == null) return;
 
@@ -220,7 +221,9 @@ namespace PlayerScripts
                 bulletScript.SetMoveDirection(shootPoint.forward, _weaponHandler.currentWeaponData.bulletSpeed);
                 bulletScript.SetShooter(_inventory); // Si tu bala necesita saber quién disparó (para puntuación, etc.)
             }
-        }
+        }*/
+        
+       
         private void HandleHealthRegen()
         {
             if (playerCurrentHealth >= playerMaxHealth) return;

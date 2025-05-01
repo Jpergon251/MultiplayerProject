@@ -1,4 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using Animations;
 using UnityEngine;
 
 namespace Managers
@@ -7,20 +10,20 @@ namespace Managers
     {
         public static GameManager Instance;
 
-        [Header("Game Settings")]
-        public int currentRound = 1;
+        [Header("Enemies settings")]
         public int enemiesPerRound = 10;
-        public float roundDelay = 3f;
-        public float enemyHealthIncreasePerRound = 20f;
-
         public int currentEnemiesAlive;
         public int enemiesSpawned;
-
+        public float enemyHealthIncreasePerRound = 20f;
+        
+        [Header("Round settings")]
+        public int currentRound = 1;
+        public float roundDelay = 3f;
         public bool roundStarted;
         public bool roundEnded;
 
+        [Header("Player settings")]
         public bool isPlayerDead;
-        
         public int enemiesKilled;
         
         
@@ -67,8 +70,10 @@ namespace Managers
             }
         }
 
-        private void StartNextRound()
+        private IEnumerator StartNextRoundCoroutine()
         {
+            yield return new WaitForSeconds(roundDelay); // Espera opcional de 3 segundos
+
             currentRound++;
             enemiesKilled = 0;
             enemiesPerRound += 5;
@@ -77,34 +82,41 @@ namespace Managers
             roundEnded = false;
             currentEnemiesAlive = 0;
             enemiesSpawned = 0;
-            ExitsManager.Instance.DeactivateAllExits();
+
+            
+
+            // Aquí podrías poner una animación de "¡Nueva Ronda!", un sonido, etc.
+            Debug.Log("Comienza la ronda " + currentRound);
         }
         
         
         public void HandleExitUsed(ExitsManager.DirectionType usedExit)
         {
-            
+            StartCoroutine(HandleExitUsedCoroutine(usedExit));
+        }
+
+        private IEnumerator HandleExitUsedCoroutine(ExitsManager.DirectionType usedExit)
+        {
+            FadeTransition.Instance.PlayFadeOut();
+
+            ExitsManager.Instance.DeactivateAllExits();
+            yield return new WaitForSeconds(1f);
 
             // Determina la salida opuesta
             var opposite = ExitsManager.Instance.GetOppositeDirection(usedExit);
-
-            // Encuentra el controlador de la salida opuesta
             var oppositeExit = ExitsManager.Instance.exits.FirstOrDefault(e => e.exitDirection == opposite);
 
             if (oppositeExit != null)
             {
-                // Mueve al jugador
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 player.transform.position = oppositeExit.transform.position;
                 player.transform.rotation = oppositeExit.transform.rotation;
-
-                // Desactiva temporalmente el trigger de entrada
-                // oppositeExit.GetComponent<Collider>().enabled = false;
-
-
             }
-
-            StartNextRound();
+            
+            yield return new WaitForSeconds(1f); // opcional, si quieres dejar respirar la transición
+            
+            FadeTransition.Instance.PlayFadeIn();
+            StartCoroutine(StartNextRoundCoroutine());
         }
         
 

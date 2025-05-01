@@ -442,7 +442,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponHolder: {fileID: 4424810467921662548}
-  currentWeapon: {fileID: 0}
+  weaponPrefab: {fileID: 3417592879797033146, guid: c798b0ca074fd0f49a8050f168069e52, type: 3}
+  bulletTrailPrefab: {fileID: 1687976820455395557, guid: ae38c8ff1a665d34b936784519f6eb84, type: 3}
+  currentWeaponInstance: {fileID: 0}
+  currentWeaponData: {fileID: 0}
 --- !u!1 &8302068113096134586
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,7 +471,7 @@ Transform:
   m_GameObject: {fileID: 8302068113096134586}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0.3, y: 0, z: 1.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

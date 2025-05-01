@@ -1,17 +1,23 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Managers;
 using PlayerScripts;
 using UnityEngine;
 
 namespace Enemy
 {
+    [System.Serializable]
+    public class DropProbability
+    {
+        public DroppableItem.DropType dropType;
+        [Range(0f, 1f)] public float probability;
+        public GameObject prefab; // Prefab del objeto que se dropea
+    }
     public class EnemyController : MonoBehaviour
     {
         [Header("Stats")]
-        public float maxHealth = 100f;
-        private float _currentHealth;
+        public float maxHealth = 200f;
+        [Range(0f,200f)]public float currentHealth;
 
         [Header("Movimiento")]
         public float moveSpeed = 3f;
@@ -23,8 +29,8 @@ namespace Enemy
         private bool _hasAttackedOnce;
         
         [Header("Drop Settings")]
-        public List<GameObject> possibleDrops; // Prefabs con el componente DroppableItem
-        [Range(0f, 1f)] public float dropChance = 0.2f; // 50% de probabilidad de dropear algo
+        [Range(0f, 1f)] public float dropChance = 0.2f;
+        public List<DropProbability> dropProbabilities; 
 
         // Estados internos
         private bool _isPlayerNear;
@@ -75,7 +81,7 @@ namespace Enemy
 
         private void Awake()
         {
-            _currentHealth = maxHealth;
+            currentHealth = maxHealth;
             _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControllerGame>();
             _inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInventory>();
             
@@ -91,7 +97,7 @@ namespace Enemy
 
         private void MoveTowardsPlayer()
         {
-            if (_player == null) return;
+            if (!_player) return;
 
             Vector3 direction = (_player.transform.position - transform.position).normalized;
             transform.position += direction * (moveSpeed * Time.deltaTime);
@@ -110,9 +116,9 @@ namespace Enemy
 
         public void TakeDamage(float damage)
         {
-            _currentHealth -= damage;
+            currentHealth -= damage;
 
-            if (_currentHealth <= 0f && !_isDead)
+            if (currentHealth <= 0f && !_isDead)
             {
                 Die();
             }
@@ -120,18 +126,32 @@ namespace Enemy
 
         private void TryDropItem()
         {
-            if (possibleDrops == null || possibleDrops.Count == 0) return;
+            if (dropProbabilities == null || dropProbabilities.Count == 0) return;
 
             float roll = UnityEngine.Random.value;
 
+            // 1. ¿Dropear algo?
             if (roll <= dropChance)
             {
-                int index = UnityEngine.Random.Range(0, possibleDrops.Count);
-                GameObject dropPrefab = possibleDrops[index];
+                // 2. Elegir qué dropear basado en probabilidades
+                float total = 0f;
+                foreach (var entry in dropProbabilities)
+                    total += entry.probability;
 
-                if (dropPrefab != null)
+                float selector = UnityEngine.Random.value * total;
+                float cumulative = 0f;
+
+                foreach (var entry in dropProbabilities)
                 {
-                    Instantiate(dropPrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+                    cumulative += entry.probability;
+                    if (selector <= cumulative)
+                    {
+                        if (entry.prefab != null)
+                        {
+                            Instantiate(entry.prefab, transform.position + Vector3.up, Quaternion.identity);
+                        }
+                        return;
+                    }
                 }
             }
         }

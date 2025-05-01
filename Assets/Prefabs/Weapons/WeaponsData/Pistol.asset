@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   weaponName: CZ-75
-  bulletPrefab: {fileID: 702497587253834598, guid: f8b8f7fbde46f224c8d055c5444958e9, type: 3}
-  fireRate: 0.5
-  bulletSpeed: 150
-  damage: 15
+  fireRate: 0.18
+  damage: 22
+  range: 40
+  penetration: 1.3
+  dispersion: 0.7

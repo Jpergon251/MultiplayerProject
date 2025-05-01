@@ -306,9 +306,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 200
+  currentHealth: 200
   moveSpeed: 3.5
   attackDamage: 150
   attackCooldown: 1
-  possibleDrops:
-  - {fileID: 7860960935593665077, guid: f6d35b0ad75672849b9a61dfee63f30c, type: 3}
   dropChance: 0.2
+  dropProbabilities:
+  - dropType: 0
+    probability: 0.5
+    prefab: {fileID: 7860960935593665077, guid: f6d35b0ad75672849b9a61dfee63f30c, type: 3}
+  - dropType: 5
+    probability: 0.1
+    prefab: {fileID: 5763931730692365090, guid: 75f94a18d63a5dd49b8390614135d7cf, type: 3}

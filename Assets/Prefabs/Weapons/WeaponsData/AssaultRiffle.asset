@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: AssaultRiffle
   m_EditorClassIdentifier: 
   weaponName: AR-77
-  bulletPrefab: {fileID: 702497587253834598, guid: f8b8f7fbde46f224c8d055c5444958e9, type: 3}
-  fireRate: 0.25
-  bulletSpeed: 150
-  damage: 30
+  fireRate: 0.09
+  damage: 12
+  range: 60
+  penetration: 2.3
+  dispersion: 1.4
