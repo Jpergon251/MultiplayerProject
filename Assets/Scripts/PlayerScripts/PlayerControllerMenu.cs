@@ -20,7 +20,7 @@ namespace PlayerScripts
 
         public void StartGame(InputAction.CallbackContext context)
         {
-            if (context.performed)
+            if (context.performed && startMenu.activeSelf)
             {
             
                 // Debug.Log("Iniciando juego desde el menú");

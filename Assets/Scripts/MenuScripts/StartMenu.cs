@@ -4,13 +4,7 @@ namespace MenuScripts
 {
     public class StartMenu : MonoBehaviour
     {
-        public GameObject insertCoinText;
-        public GameObject keyToPressText;
-
-        private void Start()
-        {
-            // InvokeRepeating("FlickKeyToPress", 0f, 0.5f);
-        }
+       public GameObject keyToPressText;
 
         public void FlickKeyToPress()
         {

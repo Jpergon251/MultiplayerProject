@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 28835547214538738}
   m_Layer: 0
   m_Name: MoneyPickup
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4151,6 +4151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dropItemType: 0
+  weaponPrefab: {fileID: 0}
 --- !u!114 &345290088505834378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4163,7 +4164,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d352a4faa15b57748a65751429b6b5f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
 --- !u!95 &28835547214538738
 Animator:
   serializedVersion: 7

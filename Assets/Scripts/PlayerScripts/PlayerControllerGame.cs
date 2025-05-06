@@ -11,7 +11,6 @@ namespace PlayerScripts
     {
         [Header("Referencias")]
         [SerializeField] private GameObject shootingPoint;
-        [SerializeField] private GameObject bulletPrefab;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject inGameMenu;
         [SerializeField] private GameObject gameOverMenu;
@@ -53,7 +52,7 @@ namespace PlayerScripts
         {
             _mainCamera = GameObject.Find("Main Camera")?.GetComponent<Camera>();
             
-            if (!shootingPoint || !bulletPrefab)
+            if (!shootingPoint)
                 Debug.LogError("Faltan referencias asignadas en el inspector.");
 
             _rb = GetComponent<Rigidbody>();

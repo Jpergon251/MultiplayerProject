@@ -318,3 +318,6 @@ MonoBehaviour:
   - dropType: 5
     probability: 0.1
     prefab: {fileID: 5763931730692365090, guid: 75f94a18d63a5dd49b8390614135d7cf, type: 3}
+  - dropType: 5
+    probability: 0.1
+    prefab: {fileID: 5763931730692365090, guid: c34fe401387174947a3ea8bf841172d4, type: 3}

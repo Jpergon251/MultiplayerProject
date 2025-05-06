@@ -1,4 +1,6 @@
 // Cada puerta tiene un componente tipo ExitController con isActive
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +13,12 @@ namespace MenuScripts
         [SerializeField] private Transform exitsParent; // ⬅️ El objeto que contiene las salidas
 
         private List<GameObject> activePointers = new();
+
+
+        private void Start()
+        {
+            gameObject.SetActive(true);
+        }
 
         public void UpdateExitArrows()
         {

@@ -27,6 +27,7 @@ namespace Weapons
                 currentWeaponInstance = null;
                 currentWeaponData = null;
                 weaponPrefab = null;
+                Destroy(weaponHolder.GetChild(0).gameObject);
             }
                 
             

@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 1906043510268349647}
   m_Layer: 0
   m_Name: AssaultRifflePickup
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -163,7 +163,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.6
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-2147667551661124242
 MonoBehaviour:

@@ -11,6 +11,8 @@ TagManager:
   - Exit
   - Menu
   - HideableRenderObject
+  - Pickup
+  - Weapon
   layers:
   - Default
   - TransparentFX
