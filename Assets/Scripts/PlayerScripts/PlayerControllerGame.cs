@@ -13,6 +13,7 @@ namespace PlayerScripts
         [SerializeField] private GameObject shootingPoint;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject inGameMenu;
+        [SerializeField] private GameObject optionsMenu;
         [SerializeField] private GameObject gameOverMenu;
        
 
@@ -237,10 +238,31 @@ namespace PlayerScripts
 
         private void UpdateHealthBar()
         {
-            if (healthSlider != null)
+            if (healthSlider)
             {
                 healthSlider.value = playerCurrentHealth;
             }
+        }
+
+        public void PauseGame()
+        {
+            inGameMenu.SetActive(false);
+            optionsMenu.SetActive(true);
+            
+            Time.timeScale = 0f;
+            PlayerInput playerInput = GetComponent<PlayerInput>();
+            Debug.Log(playerInput.defaultActionMap);
+        }
+
+        public void ResumeGame()
+        {
+            optionsMenu.SetActive(false);
+            inGameMenu.SetActive(true);
+            
+            Time.timeScale = 1f;
+            PlayerInput playerInput = GetComponent<PlayerInput>();
+            Debug.Log(playerInput.defaultActionMap);
+
         }
     }
 }

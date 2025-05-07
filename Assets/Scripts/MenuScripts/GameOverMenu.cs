@@ -13,13 +13,6 @@ namespace MenuScripts
         public GameObject title;
         public TextMeshProUGUI counterText; // Arrástralo desde el inspector
 
-        public GameObject inGameMenu;
-
-        private void Start()
-        {
-            gameObject.SetActive(false);
-        }
-
         private void Awake()
         {
             

@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.35
+    m_Value: 0.3
   xMultiplier:
     m_OverrideState: 1
     m_Value: 1
@@ -49,7 +49,7 @@ MonoBehaviour:
     m_Value: 0.9
   intensity:
     m_OverrideState: 1
-    m_Value: 2.5
+    m_Value: 3.5
   scatter:
     m_OverrideState: 0
     m_Value: 0.7
@@ -90,11 +90,11 @@ MonoBehaviour:
   components:
   - {fileID: 5521164178818555580}
   - {fileID: -2663631816037455729}
-  - {fileID: -8389079923846872397}
   - {fileID: 1110737329240778334}
   - {fileID: 2102738187957089586}
   - {fileID: 1808512147294020862}
   - {fileID: 7013568624199576823}
+  - {fileID: -8389079923846872397}
 --- !u!114 &1110737329240778334
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -132,7 +132,7 @@ MonoBehaviour:
     m_Value: 10
   intensity:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.15
   response:
     m_OverrideState: 1
     m_Value: 1
@@ -154,7 +154,7 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.18
+    m_Value: 0.08
 --- !u!114 &5521164178818555580
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -169,17 +169,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   color:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: {r: 0, g: 0, b: 0, a: 1}
   center:
     m_OverrideState: 0
     m_Value: {x: 0.85, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.42
+    m_Value: 0.4
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.15
+    m_Value: 0.25
   rounded:
     m_OverrideState: 0
     m_Value: 0

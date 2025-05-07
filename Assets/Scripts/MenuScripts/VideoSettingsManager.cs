@@ -4,7 +4,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.ProBuilder; // Solo si usas TMP_Dropdown
+using UnityEngine.ProBuilder;
+using UnityEngine.Serialization; // Solo si usas TMP_Dropdown
 
 namespace MenuScripts
 {
@@ -26,6 +27,9 @@ namespace MenuScripts
         [Header("Resolution Settings")]
         public TMP_Text resolutionText;
         public TMP_Dropdown resolutionDropdown;
+        public CanvasScaler playerCanvasScaler;
+        public Canvas playerCanvas;
+        
         private readonly Vector2Int[] resolutionOptions = new Vector2Int[]
         {
             new Vector2Int(2560, 1920),
@@ -41,14 +45,18 @@ namespace MenuScripts
         public float deltaTime;
         private void Start()
         {
+            
+            playerCanvas.renderMode = RenderMode.ScreenSpaceCamera;
             // Obtener resolución máxima del monitor
             Vector2Int maxResolution = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
 
+            playerCanvasScaler.referenceResolution = maxResolution;
             // Filtrar resoluciones permitidas
             filteredResolutionOptions = resolutionOptions
                 .Where(res => res.x <= maxResolution.x && res.y <= maxResolution.y)
                 .ToList();
 
+            
             // Limpiar y aplicar las resoluciones filtradas
             resolutionDropdown.ClearOptions();
             var resolutionLabels = filteredResolutionOptions.Select(res => $"{res.x} x {res.y}").ToList();
@@ -148,6 +156,7 @@ namespace MenuScripts
         {
             var res = filteredResolutionOptions[index];
             Screen.SetResolution(res.x, res.y, Screen.fullScreenMode);
+            playerCanvasScaler.referenceResolution = res;
             resolutionText.text = $"Resolution \n{res.x} x {res.y}";
         }
     }

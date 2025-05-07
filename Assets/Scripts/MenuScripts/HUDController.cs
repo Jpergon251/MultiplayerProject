@@ -1,6 +1,3 @@
-// Cada puerta tiene un componente tipo ExitController con isActive
-
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,12 +11,6 @@ namespace MenuScripts
 
         private List<GameObject> activePointers = new();
 
-
-        private void Start()
-        {
-            gameObject.SetActive(true);
-        }
-
         public void UpdateExitArrows()
         {
             ClearAllArrows();
@@ -27,13 +18,13 @@ namespace MenuScripts
             foreach (Transform exit in exitsParent)
             {
                 var exitComponent = exit.GetComponent<Exits.ExitsController>();
-                if (exitComponent != null && exitComponent.isActive)
+                if (exitComponent && exitComponent.isActive)
                 {
                     GameObject pointer = Instantiate(arrowPointerPrefab, arrowPointerContainer);
                     pointer.SetActive(true);
 
                     var tracker = pointer.GetComponent<ArrowTracker>();
-                    if (tracker != null)
+                    if (tracker)
                     {
                         tracker.target = exit.transform;
                     }

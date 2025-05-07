@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using Music;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,23 +24,25 @@ namespace MenuScripts
 
         private void Start()
         {
-            musicPlayer = FindObjectOfType<MusicPlayer>();
+           
+        }
+
+        public void Initialize()
+        {
+            musicPlayer = GameObject.FindObjectsByType<MusicPlayer>(FindObjectsSortMode.None).FirstOrDefault();
 
             masterVolumeSlider.onValueChanged.AddListener(OnMasterSliderChanged);
             sfxVolumeSlider.onValueChanged.AddListener(OnSFXSliderChanged);
             musicVolumeSlider.onValueChanged.AddListener(OnMusicSliderChanged);
 
-            // Inicialización: master a 10, sfx y music a 5
             masterVolumeSlider.value = 10;
             sfxVolumeSlider.value = 5;
             musicVolumeSlider.value = 5;
 
-            // Aplicar valores iniciales
             OnMasterSliderChanged(10);
             OnSFXSliderChanged(5);
             OnMusicSliderChanged(5);
         }
-
         private float SliderToVolume(int sliderValue)
         {
             return Mathf.Clamp(sliderValue / 10f, 0.0001f, 1f);
