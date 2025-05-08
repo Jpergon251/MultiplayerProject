@@ -22,11 +22,6 @@ namespace MenuScripts
         public TMP_Text musicValueText;
         public Slider musicVolumeSlider;
 
-        private void Start()
-        {
-           
-        }
-
         public void Initialize()
         {
             musicPlayer = GameObject.FindObjectsByType<MusicPlayer>(FindObjectsSortMode.None).FirstOrDefault();

@@ -31,6 +31,10 @@ namespace Managers
         
         [Header("HUD settings")]
         private HUDController _hud;
+        
+        private AudioSettingsManager _audio;
+        private VideoSettingsManager _video;
+        private ControlsSettingsManager _controls;
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -46,8 +50,12 @@ namespace Managers
 
         private void Start()
         {
+            _audio = Resources.FindObjectsOfTypeAll<AudioSettingsManager>().FirstOrDefault();
+            _video = Resources.FindObjectsOfTypeAll<VideoSettingsManager>().FirstOrDefault();
             roundStarted = true;
             _hud = FindObjectOfType<HUDController>();
+            _audio.Initialize();
+            _video.Initialize();
         }
 
         public void EnemyDied()

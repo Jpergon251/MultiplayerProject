@@ -11,11 +11,18 @@ namespace PlayerScripts
     {
         public GameObject startMenu;
         public GameObject mainMenu;
-
+        private AudioSettingsManager audioSettingsManager;
+        private VideoSettingsManager videoSettingsManager;
+        private ControlsSettingsManager controlsSettingsManager;
         private void Start()
         {
             startMenu = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(go => go.name == "StartMenu");
             mainMenu = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(go => go.name == "MainMenu");
+            audioSettingsManager = Resources.FindObjectsOfTypeAll<AudioSettingsManager>().FirstOrDefault();
+            videoSettingsManager = Resources.FindObjectsOfTypeAll<VideoSettingsManager>().FirstOrDefault();
+            controlsSettingsManager = Resources.FindObjectsOfTypeAll<ControlsSettingsManager>().FirstOrDefault();
+            audioSettingsManager.Initialize();
+            videoSettingsManager.Initialize();
         }
 
         public void StartGame(InputAction.CallbackContext context)

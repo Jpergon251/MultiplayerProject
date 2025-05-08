@@ -19,7 +19,7 @@ namespace MenuScripts
 
         private Color deactivatedColor = Color.red;
         private Color activatedColor = Color.green;
-        private void Start()
+        public void Initialize()
         {
             UpdateSensibility();
             UpdateInputMode();

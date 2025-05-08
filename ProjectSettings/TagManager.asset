@@ -13,6 +13,8 @@ TagManager:
   - HideableRenderObject
   - Pickup
   - Weapon
+  - Cursor
+  - Canva
   layers:
   - Default
   - TransparentFX

@@ -5,7 +5,7 @@ namespace Music
 {
     public class MusicPlayer : MonoBehaviour
     {
-        private static MusicPlayer instance;
+        private static MusicPlayer _instance;
         private AudioSource audioSource;
 
         [Header("Mixer")]
@@ -13,13 +13,13 @@ namespace Music
 
         void Awake()
         {
-            if (instance != null && instance != this)
+            if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
 
-            instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
             audioSource = GetComponent<AudioSource>();
             audioSource.Play();

@@ -27,7 +27,6 @@ namespace MenuScripts
         [Header("Resolution Settings")]
         public TMP_Text resolutionText;
         public TMP_Dropdown resolutionDropdown;
-        public CanvasScaler playerCanvasScaler;
         public Canvas playerCanvas;
         
         private readonly Vector2Int[] resolutionOptions = new Vector2Int[]
@@ -43,14 +42,13 @@ namespace MenuScripts
         private List<Vector2Int> filteredResolutionOptions;
         
         public float deltaTime;
-        private void Start()
+        public void Initialize()
         {
-            
+            playerCanvas = FindObjectOfType<Canvas>();
             playerCanvas.renderMode = RenderMode.ScreenSpaceCamera;
             // Obtener resolución máxima del monitor
             Vector2Int maxResolution = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
-
-            playerCanvasScaler.referenceResolution = maxResolution;
+            
             // Filtrar resoluciones permitidas
             filteredResolutionOptions = resolutionOptions
                 .Where(res => res.x <= maxResolution.x && res.y <= maxResolution.y)
@@ -71,7 +69,7 @@ namespace MenuScripts
 
             // Continuar como antes...
             // Sincronizar modos de pantalla y otros ajustes
-
+            Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
             FullScreenMode currentMode = Screen.fullScreenMode;
             int screenModeIndex = currentMode switch
             {
@@ -156,7 +154,6 @@ namespace MenuScripts
         {
             var res = filteredResolutionOptions[index];
             Screen.SetResolution(res.x, res.y, Screen.fullScreenMode);
-            playerCanvasScaler.referenceResolution = res;
             resolutionText.text = $"Resolution \n{res.x} x {res.y}";
         }
     }
