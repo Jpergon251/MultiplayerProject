@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SubmachineGun
   m_EditorClassIdentifier: 
   weaponName: MP5
-  fireRate: 0.09
+  fireRate: 0.04
   damage: 12
   range: 45
   penetration: 1.1

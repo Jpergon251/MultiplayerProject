@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Managers;
 using UnityEngine;
 
 namespace MenuScripts
@@ -11,25 +13,35 @@ namespace MenuScripts
 
         private List<GameObject> activePointers = new();
 
+        private GameManager gameManager;
+
+        private void Start()
+        {
+            gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        }
+
         public void UpdateExitArrows()
         {
-            ClearAllArrows();
-
-            foreach (Transform exit in exitsParent)
+            if (gameManager.inGameMenu.activeSelf)
             {
-                var exitComponent = exit.GetComponent<Exits.ExitsController>();
-                if (exitComponent && exitComponent.isActive)
+                ClearAllArrows();
+
+                foreach (Transform exit in exitsParent)
                 {
-                    GameObject pointer = Instantiate(arrowPointerPrefab, arrowPointerContainer);
-                    pointer.SetActive(true);
-
-                    var tracker = pointer.GetComponent<ArrowTracker>();
-                    if (tracker)
+                    var exitComponent = exit.GetComponent<Exits.ExitsController>();
+                    if (exitComponent && exitComponent.isActive)
                     {
-                        tracker.target = exit.transform;
-                    }
+                        GameObject pointer = Instantiate(arrowPointerPrefab, arrowPointerContainer);
+                        pointer.SetActive(true);
 
-                    activePointers.Add(pointer);
+                        var tracker = pointer.GetComponent<ArrowTracker>();
+                        if (tracker)
+                        {
+                            tracker.target = exit.transform;
+                        }
+
+                        activePointers.Add(pointer);
+                    }
                 }
             }
         }

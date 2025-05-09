@@ -251,7 +251,8 @@ namespace PlayerScripts
             
             Time.timeScale = 0f;
             PlayerInput playerInput = GetComponent<PlayerInput>();
-            Debug.Log(playerInput.defaultActionMap);
+            playerInput.enabled = false;
+            // Debug.Log(playerInput.defaultActionMap);
         }
 
         public void ResumeGame()
@@ -261,7 +262,8 @@ namespace PlayerScripts
             
             Time.timeScale = 1f;
             PlayerInput playerInput = GetComponent<PlayerInput>();
-            Debug.Log(playerInput.defaultActionMap);
+            playerInput.enabled = true;
+            // Debug.Log(playerInput.defaultActionMap);
 
         }
     }

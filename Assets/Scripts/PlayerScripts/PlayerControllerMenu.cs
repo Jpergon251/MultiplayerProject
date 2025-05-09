@@ -23,6 +23,7 @@ namespace PlayerScripts
             controlsSettingsManager = Resources.FindObjectsOfTypeAll<ControlsSettingsManager>().FirstOrDefault();
             audioSettingsManager.Initialize();
             videoSettingsManager.Initialize();
+            Time.timeScale = 1;
         }
 
         public void StartGame(InputAction.CallbackContext context)

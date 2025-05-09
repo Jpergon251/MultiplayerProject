@@ -31,6 +31,10 @@ namespace Managers
         
         [Header("HUD settings")]
         private HUDController _hud;
+
+        public GameObject inGameMenu;
+        public GameObject gameOverMenu;
+        public GameObject optionsMenu;
         
         private AudioSettingsManager _audio;
         private VideoSettingsManager _video;
@@ -56,6 +60,8 @@ namespace Managers
             _hud = FindObjectOfType<HUDController>();
             _audio.Initialize();
             _video.Initialize();
+
+            
         }
 
         public void EnemyDied()
