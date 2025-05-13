@@ -35,7 +35,7 @@ namespace Managers
                 _cursorContainer.GetComponent<Image>().sprite = cursorImage;
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Confined;
-                Debug.Log(_cursorContainer.GetComponent<Image>().sprite);
+                // Debug.Log(_cursorContainer.GetComponent<Image>().sprite);
             }
         }
 
@@ -48,12 +48,12 @@ namespace Managers
             {
                 
                 _cursorContainer = GameObject.FindGameObjectWithTag("Cursor");
-                Debug.Log(_cursorContainer.GetComponent<Image>().sprite);
+                // Debug.Log(_cursorContainer.GetComponent<Image>().sprite);
                 SetupCursor(menuCursor);
             }else
             {
                 _cursorContainer = GameObject.FindGameObjectWithTag("Cursor");
-                Debug.Log(_cursorContainer.GetComponent<Image>().sprite);
+                // Debug.Log(_cursorContainer.GetComponent<Image>().sprite);
                 SetupCursor(inGameCursor);
             }
             

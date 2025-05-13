@@ -15,6 +15,10 @@ TagManager:
   - Weapon
   - Cursor
   - Canva
+  - Host
+  - Client1
+  - Client2
+  - Client3
   layers:
   - Default
   - TransparentFX

@@ -20,7 +20,7 @@ namespace MenuScripts
         {
             startMenu = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(go => go.name == "StartMenu");
             mainMenu = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(go => go.name == "MainMenu");
-            lobbyMenu = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(go => go.name == "LobbyMenu");
+            lobbyMenu = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(go => go.name == "LobbyMultiplayerMenu");
             optionsMenu = Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(go => go.name == "OptionsMenu");
             if (startMenu != null) startMenu.SetActive(true);
             if (mainMenu != null) mainMenu.SetActive(false);
