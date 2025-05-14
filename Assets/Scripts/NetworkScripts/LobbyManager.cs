@@ -1,5 +1,6 @@
-using System;
+
 using TMPro;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -178,7 +179,6 @@ namespace NetworkScripts
 
                 // Mostrar el código del lobby en el UI
                 lobbyCode.text = _lobbyCode;
-
                 Debug.Log($"Lobby creado con éxito: {_lobbyCode} | Jugador: {_playerName}");
             }
             catch (LobbyServiceException e)
@@ -268,6 +268,11 @@ namespace NetworkScripts
 
                 Debug.Log($"ID: {playerId} | Nombre: {playerName}");
             }
+        }
+
+        public void StartGame()
+        {
+            
         }
     }
 }
