@@ -1,27 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
-using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace NetworkScripts
 {
-    public class LobbyManager : MonoBehaviour
+    public class LobbyManagerWithoutRelay : MonoBehaviour
     {
-        public static LobbyManager Instance;
+        public static LobbyManagerWithoutRelay Instance;
 
         [Header("UI Manager")]
         public TMP_Text lobbyCode;
         public TMP_InputField inputLobbyCode;  // Campo para ingresar el ID del lobby
-        public GameObject playersPanel;
         public GameObject[] playerSlots; // Asegúrate de que tenga 4 elementos (uno por cada jugador)
         public GameObject startButton;
         
@@ -31,6 +28,8 @@ namespace NetworkScripts
         private float _lobbyUpdateTimer;
         private string _lobbyCode;
         private string _playerName ;
+        
+        
         
         private async void Start()
         {
@@ -84,9 +83,7 @@ namespace NetworkScripts
             if (startButton != null)
                 startButton.SetActive(isHost);
 
-            // Aquí podrías agregar más lógica según roles:
-            // if (isHost) { ... }
-            // else { ... }
+            
         }
         private async void HandleLobbyHeartbeat()
         {
@@ -156,13 +153,15 @@ namespace NetworkScripts
         {
             try
             {
+                string localIP = GetLocalIPAddress(); // Nueva función, la agregamos abajo
+                Debug.Log("Mi IP local: " + localIP);
+
                 string lobbyName = "MiLobby";
                 int maxPlayers = 4;
 
-                // Crear los datos del jugador que va a ser el host
                 Player hostPlayer = new Player
                 {
-                    Data = new System.Collections.Generic.Dictionary<string, PlayerDataObject>
+                    Data = new Dictionary<string, PlayerDataObject>
                     {
                         {
                             "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, _playerName)
@@ -170,59 +169,58 @@ namespace NetworkScripts
                     }
                 };
 
-                CreateLobbyOptions options = new CreateLobbyOptions
+                var options = new CreateLobbyOptions
                 {
-                    IsPrivate = false, // o true si no quieres que aparezca en el listado
-                    Player = hostPlayer
-                };
-
-                // Crear el lobby
-                Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
-                _hostLobby = lobby;
-                _joinedLobby = lobby; // También se une como host
-                _lobbyCode = lobby.LobbyCode;
-
-                // Justo después de crear el lobby y tener la variable 'lobby'
-                Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
-                string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-
-                Debug.Log("Este es el JoinCode del Host: "+joinCode);
-
-                await LobbyService.Instance.UpdateLobbyAsync(lobby.Id, new UpdateLobbyOptions
-                {
+                    IsPrivate = false,
+                    Player = hostPlayer,
                     Data = new Dictionary<string, DataObject>
                     {
-                        { "RelayJoinCode", new DataObject(DataObject.VisibilityOptions.Member, joinCode) }
+                        { "hostIP", new DataObject(DataObject.VisibilityOptions.Member, localIP) }
                     }
-                });
+                };
 
-// ✅ Pasa la allocation al RelayManager
-                NetworkRelayManager.Instance.StartHostWithRelay(allocation);
-                // Mostrar el código del lobby en el UI
+                Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
+                _hostLobby = lobby;
+                _joinedLobby = lobby;
+                _lobbyCode = lobby.LobbyCode;
+
                 lobbyCode.text = _lobbyCode;
-
-                Debug.Log($"Lobby creado con éxito: {_lobbyCode} | Jugador: {_playerName}");
+                Debug.Log($"Lobby creado con IP {localIP} y código {_lobbyCode}");
+                
+                if (!NetworkManager.Singleton.IsListening)
+                {
+                    NetworkManager.Singleton.StartHost();
+                    Debug.Log("Host iniciado.");
+                }
             }
             catch (LobbyServiceException e)
             {
                 Debug.LogError($"Error al crear el lobby: {e.Message}");
             }
         }
-        
+        private string GetLocalIPAddress()
+        {
+            var host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            return "127.0.0.1";
+        }
         public async void JoinLobby()
         {
             try
             {
-                _hostLobby = null;
                 string code = inputLobbyCode.text.ToUpper();
 
                 Player joiningPlayer = new Player
                 {
-                    Data = new System.Collections.Generic.Dictionary<string, PlayerDataObject>
+                    Data = new Dictionary<string, PlayerDataObject>
                     {
-                        {
-                            "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, _playerName)
-                        }
+                        { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, _playerName) }
                     }
                 };
 
@@ -235,13 +233,35 @@ namespace NetworkScripts
                 _joinedLobby = lobby;
                 _lobbyCode = lobby.LobbyCode;
 
-                string joinCode = lobby.Data["RelayJoinCode"].Value;
-                Debug.Log("Este es el JoinCode del Cliente: "+joinCode);
-
-                NetworkRelayManager.Instance.JoinHostWithRelay(joinCode);
-                // Actualiza la UI
-                // Debug.Log($"Te has unido al lobby {code} como {_playerName}");
                 lobbyCode.text = _lobbyCode;
+
+                // Aquí lees la IP del host que guardaste en los datos del lobby
+                string hostIP = null;
+                if (lobby.Data != null && lobby.Data.ContainsKey("hostIP"))
+                {
+                    hostIP = lobby.Data["hostIP"].Value;
+                }
+
+                if (!string.IsNullOrEmpty(hostIP))
+                {
+                    var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+                    transport.SetConnectionData(hostIP, 7777);
+            
+                    // Ahora sí arrancas el cliente para conectarte al host
+                    NetworkManager.Singleton.StartClient();
+                }
+                else
+                {
+                    Debug.LogError("No se encontró la IP del host en los datos del lobby.");
+                }
+
+                Debug.Log($"Te has unido al lobby {code} como {_playerName}");
+                
+                if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+                {
+                    NetworkManager.Singleton.StartClient();
+                    Debug.Log("Cliente iniciado y conectado al host.");
+                }
             }
             catch (LobbyServiceException e)
             {
@@ -252,7 +272,7 @@ namespace NetworkScripts
         {
             try
             {
-                string playerId = Unity.Services.Authentication.AuthenticationService.Instance.PlayerId;
+                string playerId = AuthenticationService.Instance.PlayerId;
 
                 // Si eres el host
                 if (_hostLobby != null && _hostLobby.HostId == playerId)
@@ -277,31 +297,25 @@ namespace NetworkScripts
                 Debug.LogError($"Error al salir del lobby: {e.Message}");
             }
         }
-        public void ListPlayersInLobby()
+        
+        public void StartGame()
         {
             if (_joinedLobby == null)
             {
-                Debug.LogWarning("No estás en ningún lobby.");
+                Debug.LogWarning("No estás en un lobby.");
                 return;
             }
 
-            Debug.Log($"--- Jugadores en el lobby ({_joinedLobby.Players.Count}) ---");
-
-            foreach (var player in _joinedLobby.Players)
+            string localPlayerId = AuthenticationService.Instance.PlayerId;
+            if (_joinedLobby.HostId != localPlayerId)
             {
-                string playerId = player.Id;
-                string playerName = player.Data.ContainsKey("PlayerName") ? player.Data["PlayerName"].Value : "SinNombre";
-
-                Debug.Log($"ID: {playerId} | Nombre: {playerName}");
+                Debug.LogWarning("Solo el host puede iniciar la partida.");
+                return;
             }
+
+            Debug.Log("Host inició la partida. Cambiando escena para todos...");
+            NetworkManager.Singleton.SceneManager.LoadScene("GameSceneMultiplayer", LoadSceneMode.Single);
         }
         
-        public void OnStartGameButton()
-        {
-            if (NetworkManager.Singleton.IsHost)
-            {
-                NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
-            }
-        }
     }
 }
