@@ -182,22 +182,24 @@ namespace NetworkScripts
                 _joinedLobby = lobby; // También se une como host
                 _lobbyCode = lobby.LobbyCode;
 
-                // Justo después de crear el lobby y tener la variable 'lobby'
+                /*// Justo después de crear el lobby y tener la variable 'lobby'
                 Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
                 string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
                 Debug.Log("Este es el JoinCode del Host: "+joinCode);
+                */
 
-                await LobbyService.Instance.UpdateLobbyAsync(lobby.Id, new UpdateLobbyOptions
+                /*await LobbyService.Instance.UpdateLobbyAsync(lobby.Id, new UpdateLobbyOptions
                 {
                     Data = new Dictionary<string, DataObject>
                     {
                         { "RelayJoinCode", new DataObject(DataObject.VisibilityOptions.Member, joinCode) }
                     }
-                });
+                });*/
 
-// ✅ Pasa la allocation al RelayManager
-                NetworkRelayManager.Instance.StartHostWithRelay(allocation);
+                NetworkManager.Singleton.StartHost();
+                
+                // NetworkRelayManager.Instance.StartHostWithRelay(allocation);
                 // Mostrar el código del lobby en el UI
                 lobbyCode.text = _lobbyCode;
 
@@ -235,13 +237,15 @@ namespace NetworkScripts
                 _joinedLobby = lobby;
                 _lobbyCode = lobby.LobbyCode;
 
-                string joinCode = lobby.Data["RelayJoinCode"].Value;
-                Debug.Log("Este es el JoinCode del Cliente: "+joinCode);
-
-                NetworkRelayManager.Instance.JoinHostWithRelay(joinCode);
+                // string joinCode = lobby.Data["RelayJoinCode"].Value;
+                // Debug.Log("Este es el JoinCode del Cliente: "+joinCode);
+                //
+                // NetworkRelayManager.Instance.JoinHostWithRelay(joinCode);
                 // Actualiza la UI
                 // Debug.Log($"Te has unido al lobby {code} como {_playerName}");
                 lobbyCode.text = _lobbyCode;
+                await Task.Delay(2000);
+                NetworkManager.Singleton.StartClient();
             }
             catch (LobbyServiceException e)
             {
@@ -296,12 +300,9 @@ namespace NetworkScripts
             }
         }
         
-        public void OnStartGameButton()
+        public void StartGame()
         {
-            if (NetworkManager.Singleton.IsHost)
-            {
-                NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
-            }
+            NetworkManager.Singleton.SceneManager.LoadScene("GameSceneMultiplayer", LoadSceneMode.Single);
         }
     }
 }

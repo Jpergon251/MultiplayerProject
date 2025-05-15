@@ -153,9 +153,6 @@ namespace NetworkScripts
         {
             try
             {
-                string localIP = GetLocalIPAddress(); // Nueva función, la agregamos abajo
-                Debug.Log("Mi IP local: " + localIP);
-
                 string lobbyName = "MiLobby";
                 int maxPlayers = 4;
 
@@ -173,10 +170,7 @@ namespace NetworkScripts
                 {
                     IsPrivate = false,
                     Player = hostPlayer,
-                    Data = new Dictionary<string, DataObject>
-                    {
-                        { "hostIP", new DataObject(DataObject.VisibilityOptions.Member, localIP) }
-                    }
+                   
                 };
 
                 Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
@@ -185,31 +179,15 @@ namespace NetworkScripts
                 _lobbyCode = lobby.LobbyCode;
 
                 lobbyCode.text = _lobbyCode;
-                Debug.Log($"Lobby creado con IP {localIP} y código {_lobbyCode}");
+                // Debug.Log($"Lobby creado con IP {localIP} y código {_lobbyCode}");
                 
-                if (!NetworkManager.Singleton.IsListening)
-                {
-                    NetworkManager.Singleton.StartHost();
-                    Debug.Log("Host iniciado.");
-                }
             }
             catch (LobbyServiceException e)
             {
                 Debug.LogError($"Error al crear el lobby: {e.Message}");
             }
         }
-        private string GetLocalIPAddress()
-        {
-            var host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                {
-                    return ip.ToString();
-                }
-            }
-            return "127.0.0.1";
-        }
+       
         public async void JoinLobby()
         {
             try
@@ -234,34 +212,11 @@ namespace NetworkScripts
                 _lobbyCode = lobby.LobbyCode;
 
                 lobbyCode.text = _lobbyCode;
-
-                // Aquí lees la IP del host que guardaste en los datos del lobby
-                string hostIP = null;
-                if (lobby.Data != null && lobby.Data.ContainsKey("hostIP"))
-                {
-                    hostIP = lobby.Data["hostIP"].Value;
-                }
-
-                if (!string.IsNullOrEmpty(hostIP))
-                {
-                    var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-                    transport.SetConnectionData(hostIP, 7777);
-            
-                    // Ahora sí arrancas el cliente para conectarte al host
-                    NetworkManager.Singleton.StartClient();
-                }
-                else
-                {
-                    Debug.LogError("No se encontró la IP del host en los datos del lobby.");
-                }
+                
 
                 Debug.Log($"Te has unido al lobby {code} como {_playerName}");
                 
-                if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-                {
-                    NetworkManager.Singleton.StartClient();
-                    Debug.Log("Cliente iniciado y conectado al host.");
-                }
+                
             }
             catch (LobbyServiceException e)
             {
