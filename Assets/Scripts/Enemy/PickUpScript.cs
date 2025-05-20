@@ -10,6 +10,8 @@ namespace Enemy
         private void Awake()
         {
             _droppableItem = gameObject.GetComponent<DroppableItem>();
+            
+            Destroy(gameObject, 20f);
         }
 
         private void OnTriggerEnter(Collider other)
